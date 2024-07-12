@@ -8,6 +8,8 @@ fastapi = "*"
 uvicorn = "*"
 black = "*"
 pydantic = "*"
+flake8 = "*"
+yapf = "*"
 
 [dev-packages]
 

@@ -33,7 +33,7 @@ class OrderItemSchema(BaseModel):
 
 
 class CreateOrderSchema(BaseModel):
-    order: conlist(OrderItemSchema, min_item=1)
+    order: conlist(OrderItemSchema, min_length=1)
 
 
 class GetOrderSchema(CreateOrderSchema):
