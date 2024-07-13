@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 from uuid import UUID
 
+from fastapi import HTTPException
 from starlette.responses import Response
 from starlette import status
 
@@ -45,33 +46,73 @@ def create_order(order_details: CreateOrderSchema) -> dict:
     order['created'] = datetime.utcnow()
     order['status'] = 'created'
     ORDERS.append(order)
-    
+
     return order
 
 
 @app.get('/orders/{order_id}')
 def get_order(order_id: UUID):
-    return orders
+
+    for order in ORDERS:
+        if order['id'] == order_id:
+            return order
+
+    raise HTTPException(
+        status_code=404, detail=f'Order with ID {order_id} not found'
+    )
 
 
 @app.put('/orders/{order_id}')
 def update_order(order_id: UUID, order_details: CreateOrderSchema):
-    return orders
+
+    for order in ORDERS:
+        if order['id'] == order_id:
+            order.update(order_details.dict())
+            return order
+
+    raise HTTPException(
+        status_code=404, detail=f'Order with ID {order_id} not found'
+    )
 
 
-@app.delete('/orders/{order_id}')
+@app.delete('/orders/{order_id}',
+            status_code=status.HTTP_201_CREATED,
+            response_class=Response)
 def delete_order(order_id: UUID):
-    return Response(status_code=status.HTTPStatus.NO_CONTENT.value)
+    
+    for index, order in enumerate(ORDERS):
+        if order['id'] == order_id:
+            ORDERS.pop(index)
+            return Response(status_code=status.HTTPStatus.NO_CONTENT.value)
+
+    raise HTTPException(
+        status_code=404, detail=f'Order with ID {order_id} not found'
+    )
 
 
 @app.post('/orders/{order_id}/cancel')
 def cancel_order(order_id: UUID):
-    return orders
+
+    for order in ORDERS:
+        if order['id'] == order_id:
+            return order
+
+    raise HTTPException(
+        status_code=404, detail=f'Order with ID {order_id} not found'
+    )
 
 
 @app.post('/orders/{order_id}/pay')
 def pay_order(order_id: UUID):
-    return orders
+
+    for order in ORDERS:
+        if order['id'] == order_id:
+            order['status'] = 'progress'
+            return order
+
+    raise HTTPException(
+        status_code=404, detail=f'Order with ID {order_id} not found'
+    )
 
 
 def test():
