@@ -1,3 +1,5 @@
+"""アプリケーションのエントリーポイント
+"""
 from fastapi import FastAPI
 from orders.api import api
 
