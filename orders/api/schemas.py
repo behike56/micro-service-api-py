@@ -1,3 +1,7 @@
+"""検証モデル
+
+pydanticを使用した検証モデルの実装モジュール
+"""
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
@@ -22,12 +26,30 @@ class StatusEnum(Enum):
 
 
 class OrderItemSchema(BaseModel):
+    """注文商品スキーマ
+
+    Args:
+        BaseModel (_type_): _description_
+
+    Mmeber:
+        product: 商品名
+        size: 大きさ
+        quantity: 個数
+    """
     product: str
     size: Size
     quantity: Optional[conint(ge=1, strict=True)] = 1
 
     @validator("quantity")
     def quantity_non_nullable(cls, value):
+        """_summary_
+
+        Args:
+            value (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         assert value is not None, "quantity may not be None"
         return value
 
