@@ -1,6 +1,10 @@
 """検証モデル
 
 pydanticを使用した検証モデルの実装モジュール
+
+検証モデルを実装したスキーマオブジェクトは、
+ペイロードのデータ型を定義すると同時に、
+データ検証の機能が作り込まれたものとなる。
 """
 from datetime import datetime
 from enum import Enum
@@ -34,7 +38,7 @@ class OrderItemSchema(BaseModel):
     Mmeber:
         product: 商品名
         size: 大きさ
-        quantity: 個数
+        quantity: 個数（オプション）
     """
     product: str
     size: Size
