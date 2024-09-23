@@ -8,11 +8,8 @@ fastapi = "*"
 uvicorn = "*"
 pydantic = "*"
 
-
 [dev-packages]
 ruff = "*"
-yapf = "*"
-black = "*"
 
 [requires]
 python_version = "3.12"
