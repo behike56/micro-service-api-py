@@ -6,12 +6,13 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
-black = "*"
 pydantic = "*"
-flake8 = "*"
-yapf = "*"
+
 
 [dev-packages]
+ruff = "*"
+yapf = "*"
+black = "*"
 
 [requires]
 python_version = "3.12"
