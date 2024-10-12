@@ -1,0 +1,17 @@
+{
+    "id": "",
+    "status": "progress",
+    "created": "2022-05-01",
+    "order": [
+        {
+            "product": "cappucino",
+            "size": "small",
+            "quantity": 1
+        },
+        {
+            "product": "croissant",
+            "size": "medium",
+            "quantity": 2
+        }
+    ]
+}
