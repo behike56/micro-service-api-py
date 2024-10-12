@@ -1,0 +1,152 @@
+openapi: 3.0.3
+
+info:
+  title: Orders API
+  description: API that allows you to manage orders for CoffeeMesh
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: local development server
+  - url: https://coffeemesh.com
+    description: main production server
+  - url: https://coffeemesh-staging.com
+    description: staging server for testing purposes only
+
+paths: # エンドポイント
+  /orders:
+    get:
+      summary: 注文のリストを返す。
+      operationId: getOrders
+      parameters: # URLクエリパラメータの定義
+        - name: cancelled # パラメータ名
+          in: query # in記述子によってこのパラメータがURLパスに含まれることを指定している。
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+    post:
+      summary: 注文を作成。注文の詳細が含まれたペイロードを要求する。
+      operationId: createOrder
+      requestBody: # リクエストペイロードの定義
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderSchema' # JSONポインタを使用してドキュメント内の別の場所のスキーマを参照。
+
+  
+  /orders/{order_id}:
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: 特定の注文の詳細を返す。
+      operationId: getOrder
+      responses: # レスポンスペイロードの定義
+        '200': # レスポンスはステータスコードをキーに持つオブジェクトである。
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderSchema'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: 注文の詳細を更新する。
+      operationId: updateOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderSchema'
+
+    delete:
+      summary: 特定の注文を削除する。
+      operationId: deleteOrder
+
+  /orders/{order_id}/pay:
+    post:
+      summary: 注文の支払いを行う。
+      operationId: payOrder
+  
+  /orders/{order_id}/cancel:
+    post:
+      summary: 注文をキャンセルする。
+      operationId: cancelOrder
+
+components:
+  responses:
+    NotFound:
+      description: asd
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    OrderItem:
+      type: object
+      properties:
+        product:
+          type: string
+        size:
+          type: string
+          enum:
+            - small
+            - medium
+            - big
+        quantity:
+          type: integer
+          default: 1
+      required:
+        - product
+        - size
+    
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+        - detail
+    
+    GetOrderSchema:
+      allOf: # 他のスキーマのプロパティを継承
+        - $ref: '#/components/schemas/CreateOrderSchema'
+        - type: object
+          properties:
+            status:
+              type: string
+              enum:
+                - created
+                - paid
+                - progress
+                - cancelled
+                - dispatched
+                - delivered
+            created:
+              type: string
+              format: date-time
+            order:
+              type: array
+              items:
+                $ref: '#/components/schemas/OrderItem'
+
+    CreateOrderSchema:
+      type: object
+      properties:
+        order:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
